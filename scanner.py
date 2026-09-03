@@ -19,3 +19,22 @@ def get_file_info(file_path):
         "size": file_path.stat().st_size,
     }
     return file_info
+
+
+def count_files(files):
+    return len(files)
+
+
+def total_size(files):
+    units = ["B", "KB", "MB", "GB", "TB"]
+    unit_index = 0
+    total_size = 0
+    for file in files:
+        total_size += file.stat().st_size
+
+    while total_size >= 1024 and unit_index < len(units) - 1:
+        total_size = total_size / 1024
+        unit_index += 1
+
+    total_size = round(total_size, 2)
+    return total_size, units[unit_index]
