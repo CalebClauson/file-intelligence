@@ -1,7 +1,9 @@
-from scanner import count_files, get_file_info, scan_directory, total_size
+from scanner import count_by_extension, count_files, get_file_info, scan_directory, total_size, get_largest_files
+
 
 files = scan_directory("/home/caleb/workspace/caleb_clauson")
-
+extension_counts = count_by_extension(files)
+sorted_counts = sorted(extension_counts.items(), key=lambda item: item[1], reverse=True)
 # for file in files:
 #     print(file)
 
@@ -13,3 +15,10 @@ print("Total size of files:", total_size(files))
 print("Total files:", count_files(files))
 # print("Total files:", len(files))
 # print(files[:5])
+
+# Sorted Arrangment
+for extension, count in sorted_counts:
+    label = extension if extension else "No extension"
+    print(f"{label}: {count}")
+
+print("10 Largest:", get_largest_files(files))

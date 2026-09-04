@@ -1,3 +1,4 @@
+import heapq
 from pathlib import Path
 
 
@@ -37,4 +38,28 @@ def total_size(files):
         unit_index += 1
 
     total_size = round(total_size, 2)
-    return total_size, units[unit_index]
+
+
+def count_by_extension(files):
+    file_type = {}
+
+    for file in files:
+        extension = file.suffix
+        file_type[extension] = file_type.get(extension, 0) + 1
+
+    return file_type
+
+
+def get_largest_files(files, limit=10):
+    largest_files = []
+    for file in files:
+        file_size = file.stat().st_size
+        entry = (file_size, file)
+
+        if len(largest_files) < limit:
+            heapq.heappush(largest_files, entry)
+        elif file_size > largest_files[0][0]:
+            heapq.heapreplace(largest_files, entry)
+    # currently in bytes
+    return sorted(largest_files, key=lambda item: item[0], reverse=True)
+    
