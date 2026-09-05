@@ -1,7 +1,18 @@
 import heapq
 from pathlib import Path
+import hashlib
 
+# Helpers
+def format_size(size_in_bytes):
+    units = ["B", "KB", "MB", "GB", "TB"]
+    unit_index = 0
+    while size_in_bytes >= 1024 and unit_index < len(units) - 1:
+        size_in_bytes = size_in_bytes / 1024
+        unit_index += 1
+        
+    return round(size_in_bytes, 2), units[unit_index]
 
+# Primary Functions
 def scan_directory(path):
     path = Path(path)
     scan_results = []
@@ -62,4 +73,26 @@ def get_largest_files(files, limit=10):
             heapq.heapreplace(largest_files, entry)
     # currently in bytes
     return sorted(largest_files, key=lambda item: item[0], reverse=True)
+
+def hash_file(file_path):
+    file_hash = hashlib.sha256()
+
+    with open(file_path, "rb") as file:
+        while True:
+            chunk = file.read(4096)
+            if not chunk:
+                break
+            file_hash.update(chunk)
+
+    return file_hash.hexdigest()
+
+def find_duplicate(files):
+    # also important to consider two files with different file sizes can not be the same
     
+    # → loop through files
+    # → call hash_file(file)
+    # → store hash → list of file paths
+    # → filter to hashes with 2+ files
+    # → return duplicates
+    
+    return
