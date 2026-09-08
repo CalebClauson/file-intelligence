@@ -124,8 +124,17 @@ def find_duplicates(files):
     return duplicates
 
 def find_empty_directories(path):
+    path = Path(path)
+    empty_directories = []
     
-    return
+    for directory in path.rglob("*"):
+        if directory.is_dir():
+            if not any(directory.iterdir()):
+                empty_directories.append(directory)
+        else:
+            print("Not empty")
+                
+    return empty_directories
 
 def generate_report():
     return
