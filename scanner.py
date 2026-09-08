@@ -86,13 +86,50 @@ def hash_file(file_path):
 
     return file_hash.hexdigest()
 
-def find_duplicate(files):
-    # also important to consider two files with different file sizes can not be the same
+def find_duplicates(files):
+    # a bit more complicated to try to not hash anything unneccessary  
+    hash_groups = {}
+    file_size_groups = {}
+    duplicates = {}
+
+    # Group files by size first
+    for file in files:
+        file_size = file.stat().st_size
+
+        if file_size in file_size_groups:
+            file_size_groups[file_size].append(file)
+        else:
+            file_size_groups[file_size] = [file]
+
+    # Only hash files that share a size with another file
+    for file_size in file_size_groups:
+        grouped_files = file_size_groups[file_size]
+
+        if len(grouped_files) == 1:
+            continue
+
+        for grouped_file in grouped_files:
+            file_hash = hash_file(grouped_file)
+
+            if file_hash in hash_groups:
+                hash_groups[file_hash].append(grouped_file)
+            else:
+                hash_groups[file_hash] = [grouped_file]             
+        
+    # Keep only actual duplicate groups
+    for file_hash, grouped_files in hash_groups.items():
+        if len(grouped_files) > 1:
+            duplicates[file_hash] = grouped_files
     
-    # → loop through files
-    # → call hash_file(file)
-    # → store hash → list of file paths
-    # → filter to hashes with 2+ files
-    # → return duplicates
+    return duplicates
+
+def find_empty_directories(path):
     
     return
+
+def generate_report():
+    return
+
+def print_report(report):
+    return
+
