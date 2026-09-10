@@ -3,14 +3,13 @@ from pathlib import Path
 import hashlib
 
 # Helpers
-def format_size(size_in_bytes):
+def format_size(bytes):
     units = ["B", "KB", "MB", "GB", "TB"]
     unit_index = 0
-    while size_in_bytes >= 1024 and unit_index < len(units) - 1:
-        size_in_bytes = size_in_bytes / 1024
+    while bytes >= 1024 and unit_index < len(units) - 1:
+        bytes = bytes / 1024
         unit_index += 1
-        
-    return round(size_in_bytes, 2), units[unit_index]
+    return round(bytes, 2), units[unit_index]
 
 # Primary Functions
 def scan_directory(path):
@@ -38,26 +37,18 @@ def count_files(files):
 
 
 def total_size(files):
-    units = ["B", "KB", "MB", "GB", "TB"]
-    unit_index = 0
     total_size = 0
     for file in files:
         total_size += file.stat().st_size
-
-    while total_size >= 1024 and unit_index < len(units) - 1:
-        total_size = total_size / 1024
-        unit_index += 1
-
-    total_size = round(total_size, 2)
+    return format_size(total_size)
+    
 
 
 def count_by_extension(files):
     file_type = {}
-
     for file in files:
         extension = file.suffix
         file_type[extension] = file_type.get(extension, 0) + 1
-
     return file_type
 
 
@@ -66,24 +57,42 @@ def get_largest_files(files, limit=10):
     for file in files:
         file_size = file.stat().st_size
         entry = (file_size, file)
-
         if len(largest_files) < limit:
             heapq.heappush(largest_files, entry)
         elif file_size > largest_files[0][0]:
             heapq.heapreplace(largest_files, entry)
-    # currently in bytes
-    return sorted(largest_files, key=lambda item: item[0], reverse=True)
+    return largest_files
+
+def sort_largest_files(largest_files):
+    heap_copy = largest_files.copy()
+    sorted_largest_files = []
+    while heap_copy:
+        sorted_largest_files.append(heapq.heappop(heap_copy))
+    sorted_largest_files.reverse()
+    return sorted_largest_files
+
+def format_largest_files(sorted_largest_files):
+    formatted_largest_files = []
+    for file_size, file_path in sorted_largest_files:
+        formatted_size, unit = format_size(file_size)
+        file_info = { "size": formatted_size, "unit": unit, "path": file_path}
+        formatted_largest_files.append(file_info)
+    return formatted_largest_files
+
+def build_largest_file_report(files):
+    largest_files = get_largest_files(files)
+    sorted_files = sort_largest_files(largest_files)
+    formatted_files = format_largest_files(sorted_files)
+    return formatted_files
 
 def hash_file(file_path):
     file_hash = hashlib.sha256()
-
     with open(file_path, "rb") as file:
         while True:
             chunk = file.read(4096)
             if not chunk:
                 break
             file_hash.update(chunk)
-
     return file_hash.hexdigest()
 
 def find_duplicates(files):
