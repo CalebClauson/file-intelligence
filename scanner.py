@@ -182,7 +182,12 @@ def generate_report(files, path):
     return report
 
 def print_report(report):
-    return
+    for key, value in report.items():
+        print(f"{key}: {value}")
+
+def print_report_execute(files, path):
+    report = generate_report(files, path)
+    print_report(report)
 
 def json_dump(report):
     output_path = Path("output/report.json")
