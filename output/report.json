@@ -1,0 +1,42 @@
+{
+    "path": "test_data",
+    "total_files": 4,
+    "total_size": [
+        65,
+        "B"
+    ],
+    "extensions": {
+        ".txt": 4
+    },
+    "largest_files": [
+        {
+            "size": 28,
+            "unit": "B",
+            "path": "test_data/file2.txt"
+        },
+        {
+            "size": 17,
+            "unit": "B",
+            "path": "test_data/file1.txt"
+        },
+        {
+            "size": 10,
+            "unit": "B",
+            "path": "test_data/duplicate2.txt"
+        },
+        {
+            "size": 10,
+            "unit": "B",
+            "path": "test_data/duplicate1.txt"
+        }
+    ],
+    "duplicates": {
+        "b822f1cd2dcfc685b47e83e3980289fd5d8e3ff3a82def24d7d1d68bb272eb32": [
+            "test_data/duplicate2.txt",
+            "test_data/duplicate1.txt"
+        ]
+    },
+    "empty_directories": [
+        "test_data/empty_folder"
+    ]
+}

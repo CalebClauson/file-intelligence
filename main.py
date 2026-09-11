@@ -1,25 +1,28 @@
-from scanner import count_by_extension, count_files, format_largest_files, get_file_info, scan_directory, total_size, get_largest_files, build_largest_file_report, format_largest_files
+from scanner import count_by_extension, count_files, format_largest_files, get_file_info, scan_directory, total_size, get_largest_files, build_largest_file_report, format_largest_files, export_report_json, hash_file
+from pathlib import Path
+# extension_counts = count_by_extension(files)
+# sorted_counts = sorted(extension_counts.items(), key=lambda item: item[1], reverse=True)
+# largest = build_largest_file_report(files)
+# # for file in files:
+# #     print(file)
 
 
-files = scan_directory("/home/caleb/workspace/caleb_clauson")
-extension_counts = count_by_extension(files)
-sorted_counts = sorted(extension_counts.items(), key=lambda item: item[1], reverse=True)
-largest = build_largest_file_report(files)
-# for file in files:
-#     print(file)
+# # for file in files[:10]:
+# #     print(get_file_info(file))
 
+# print("Total size of files:", total_size(files))
+# print("Total files:", count_files(files))
+# # print("Total files:", len(files))
+# # print(files[:5])
 
-# for file in files[:10]:
-#     print(get_file_info(file))
+# # Sorted Arrangment
+# for extension, count in sorted_counts:
+#     label = extension if extension else "No extension"
+#     print(f"{label}: {count}")
 
-print("Total size of files:", total_size(files))
-print("Total files:", count_files(files))
-# print("Total files:", len(files))
-# print(files[:5])
+# print("10 Largest:", largest)
 
-# Sorted Arrangment
-for extension, count in sorted_counts:
-    label = extension if extension else "No extension"
-    print(f"{label}: {count}")
+test_path = Path("test_data")
+files = scan_directory(test_path)
 
-print("10 Largest:", largest)
+export_report_json(files, test_path)

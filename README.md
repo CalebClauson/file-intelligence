@@ -25,6 +25,7 @@ This project is being developed alongside my reading of *Clean Code* by Robert C
 - Largest-file detection with heap
 - Duplicate detection using file size + SHA-256 hashing
 - Empty directory detection
+- JSON or CSV export
 
 ## Current Project Structure
 
@@ -40,7 +41,6 @@ file-intelligence/
 - Terminal report generation
 - Directory/file exclusion rules
 - File filtering options
-- JSON or CSV export
 
 # Tech
 

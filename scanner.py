@@ -1,6 +1,7 @@
 import heapq
 from pathlib import Path
 import hashlib
+import json
 
 # Helpers
 def format_size(bytes):
@@ -25,7 +26,7 @@ def get_file_info(file_path):
     file_path = Path(file_path)
     file_info = {
         "name": file_path.name,
-        "path": file_path,
+        "path": str(file_path),
         "extension": file_path.suffix,
         "size": file_path.stat().st_size,
     }
@@ -75,7 +76,7 @@ def format_largest_files(sorted_largest_files):
     formatted_largest_files = []
     for file_size, file_path in sorted_largest_files:
         formatted_size, unit = format_size(file_size)
-        file_info = { "size": formatted_size, "unit": unit, "path": file_path}
+        file_info = { "size": formatted_size, "unit": unit, "path": str(file_path)}
         formatted_largest_files.append(file_info)
     return formatted_largest_files
 
@@ -97,11 +98,9 @@ def hash_file(file_path):
             file_hash.update(chunk)
     return file_hash.hexdigest()
 
-# seperate functions here so its single purpose mindset
 
+# Dupe Cluster of functions
 def group_by_size(files):
-    # a bit more complicated to try to not hash anything unneccessary  
-    # Group files by size first
     file_size_groups = {}
     for file in files:
         file_size = file.stat().st_size
@@ -112,11 +111,10 @@ def group_by_size(files):
             file_size_groups[file_size] = [file]
     return file_size_groups
 
-    # Only hash files that share a size with another file
 def hash_duplicates(file_size_groups):
     hash_groups = {}
     
-    for group in file_size_groups.items():
+    for group in file_size_groups.values():
         if len(group) == 1:
             continue
     
@@ -139,12 +137,25 @@ def filter_duplicates(hash_groups):
 
     return duplicates
 
+def format_duplicate_paths(duplicates):
+    formatted_duplicates = {}
+
+    for file_hash, grouped_files in duplicates.items():
+        formatted_duplicates[file_hash] = [
+            str(file) for file in grouped_files
+        ]
+
+    return formatted_duplicates
+
 def find_duplicates(files):
     file_size_groups = group_by_size(files)
     hash_groups = hash_duplicates(file_size_groups)
     duplicates = filter_duplicates(hash_groups)
+    formatted_duplicates = format_duplicate_paths(duplicates)
 
-    return duplicates
+    return formatted_duplicates
+
+# Cluster End
     
 
 def find_empty_directories(path):
@@ -154,15 +165,34 @@ def find_empty_directories(path):
     for directory in path.rglob("*"):
         if directory.is_dir():
             if not any(directory.iterdir()):
-                empty_directories.append(directory)
-        else:
-            print("Not empty")
+                empty_directories.append(str(directory))
                 
     return empty_directories
 
-def generate_report():
-    return
+def generate_report(files, path):
+    report = {
+        "path": str(path),
+        "total_files": count_files(files),
+        "total_size": total_size(files),
+        "extensions": count_by_extension(files),
+        "largest_files": build_largest_file_report(files),
+        "duplicates": find_duplicates(files),
+        "empty_directories": find_empty_directories(path)
+    }
+    return report
 
 def print_report(report):
     return
 
+def json_dump(report):
+    output_path = Path("output/report.json")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, indent=4, ensure_ascii=False)
+
+def export_report_json(files, path):
+    report = generate_report(files, path)
+    json_dump(report)
+    print("Report has been generated...")
+    
