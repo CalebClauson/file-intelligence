@@ -51,7 +51,7 @@ def count_by_extension(files):
         file_type[extension] = file_type.get(extension, 0) + 1
     return file_type
 
-
+# Large File Cluster Functions
 def get_largest_files(files, limit=10):
     largest_files = []
     for file in files:
@@ -85,6 +85,8 @@ def build_largest_file_report(files):
     formatted_files = format_largest_files(sorted_files)
     return formatted_files
 
+# Cluster End
+
 def hash_file(file_path):
     file_hash = hashlib.sha256()
     with open(file_path, "rb") as file:
@@ -95,13 +97,12 @@ def hash_file(file_path):
             file_hash.update(chunk)
     return file_hash.hexdigest()
 
-def find_duplicates(files):
-    # a bit more complicated to try to not hash anything unneccessary  
-    hash_groups = {}
-    file_size_groups = {}
-    duplicates = {}
+# seperate functions here so its single purpose mindset
 
+def group_by_size(files):
+    # a bit more complicated to try to not hash anything unneccessary  
     # Group files by size first
+    file_size_groups = {}
     for file in files:
         file_size = file.stat().st_size
 
@@ -109,28 +110,42 @@ def find_duplicates(files):
             file_size_groups[file_size].append(file)
         else:
             file_size_groups[file_size] = [file]
+    return file_size_groups
 
     # Only hash files that share a size with another file
-    for file_size in file_size_groups:
-        grouped_files = file_size_groups[file_size]
-
-        if len(grouped_files) == 1:
+def hash_duplicates(file_size_groups):
+    hash_groups = {}
+    
+    for group in file_size_groups.items():
+        if len(group) == 1:
             continue
-
-        for grouped_file in grouped_files:
-            file_hash = hash_file(grouped_file)
-
+    
+        for file in group:
+            file_hash = hash_file(file)
+    
             if file_hash in hash_groups:
-                hash_groups[file_hash].append(grouped_file)
+                hash_groups[file_hash].append(file)
             else:
-                hash_groups[file_hash] = [grouped_file]             
-        
-    # Keep only actual duplicate groups
+                hash_groups[file_hash] = [file]
+    
+    return hash_groups 
+            
+def filter_duplicates(hash_groups):
+    duplicates = {}
+
     for file_hash, grouped_files in hash_groups.items():
         if len(grouped_files) > 1:
             duplicates[file_hash] = grouped_files
-    
+
     return duplicates
+
+def find_duplicates(files):
+    file_size_groups = group_by_size(files)
+    hash_groups = hash_duplicates(file_size_groups)
+    duplicates = filter_duplicates(hash_groups)
+
+    return duplicates
+    
 
 def find_empty_directories(path):
     path = Path(path)
