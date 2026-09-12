@@ -183,7 +183,33 @@ def generate_report(files, path):
 
 def print_report(report):
     for key, value in report.items():
-        print(f"{key}: {value}")
+        label = key.replace("_", " ").title()
+        if key == "path":
+            continue
+        elif key == "total_files":
+            print("---Total Files---")
+            print(f"{label} : {value}")
+        elif key == "extensions":
+            print("---Extension Types---")
+            print(f"{value}")
+        elif key == "largest_files":
+            print("---Largest Files---")
+            for file_info in value:
+                file_name = Path(file_info["path"]).name
+                print(f"{file_name} - {file_info['size']} {file_info['unit']}")
+        elif key == "duplicates":
+            print(f"---Duplicates---")
+            for grouped_files in value.values():
+                for file_path in grouped_files:
+                    file_name = Path(file_path).name
+                    print(f"{file_name}")
+        elif key == "empty_directories":
+            print(f"---Empty Directories---")
+            for directory in value:
+                directory_name = Path(directory).name
+                print(f"{directory_name}")
+            print("-------------------")
+        
 
 def print_report_execute(files, path):
     report = generate_report(files, path)
