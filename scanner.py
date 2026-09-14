@@ -42,8 +42,11 @@ def total_size(files):
     for file in files:
         total_size += file.stat().st_size
     return format_size(total_size)
-    
 
+def print_total_files(total_files):
+    print("---Total Files---")
+    print(f"Total Files : {total_files}")
+    
 
 def count_by_extension(files):
     file_type = {}
@@ -51,6 +54,15 @@ def count_by_extension(files):
         extension = file.suffix
         file_type[extension] = file_type.get(extension, 0) + 1
     return file_type
+
+def print_extensions(extensions):
+    print("---Extension Types in Directory---")
+    for extension, count in extensions.items():
+        if extension:
+            display_extension = extension
+        else:
+            display_extension = "No Extension"
+        print(f"{display_extension} : {count}")
 
 # Large File Cluster Functions
 def get_largest_files(files, limit=10):
@@ -85,6 +97,13 @@ def build_largest_file_report(files):
     sorted_files = sort_largest_files(largest_files)
     formatted_files = format_largest_files(sorted_files)
     return formatted_files
+
+def print_largest(formatted_files):
+    print("---Largest Files in Directory---")
+
+    for file_info in formatted_files:
+        file_name = Path(file_info["path"]).name
+        print(f"{file_name} - {file_info['size']} {file_info['unit']}")
 
 # Cluster End
 
@@ -155,6 +174,14 @@ def find_duplicates(files):
 
     return formatted_duplicates
 
+def print_duplicates(duplicates):
+    print("---Duplicate Files in Directory---")
+
+    for grouped_files in duplicates.values():
+        for file_path in grouped_files:
+            file_name = Path(file_path).name
+            print(file_name)
+
 # Cluster End
     
 
@@ -168,6 +195,13 @@ def find_empty_directories(path):
                 empty_directories.append(str(directory))
                 
     return empty_directories
+
+def print_empty_directories(directories):
+    print("---Empty Directories---")
+
+    for directory in directories:
+        directory_name = Path(directory).name
+        print(directory_name)
 
 def generate_report(files, path):
     report = {
@@ -183,32 +217,24 @@ def generate_report(files, path):
 
 def print_report(report):
     for key, value in report.items():
-        label = key.replace("_", " ").title()
         if key == "path":
             continue
         elif key == "total_files":
-            print("---Total Files---")
-            print(f"{label} : {value}")
+            print_total_files(value)
+            
         elif key == "extensions":
-            print("---Extension Types---")
-            print(f"{value}")
+            print_extensions(value)
+            
         elif key == "largest_files":
-            print("---Largest Files---")
-            for file_info in value:
-                file_name = Path(file_info["path"]).name
-                print(f"{file_name} - {file_info['size']} {file_info['unit']}")
+            print_largest(value)
+            
         elif key == "duplicates":
-            print(f"---Duplicates---")
-            for grouped_files in value.values():
-                for file_path in grouped_files:
-                    file_name = Path(file_path).name
-                    print(f"{file_name}")
+            print_duplicates(value)
+            
         elif key == "empty_directories":
-            print(f"---Empty Directories---")
-            for directory in value:
-                directory_name = Path(directory).name
-                print(f"{directory_name}")
-            print("-------------------")
+            print_empty_directories(value)
+            
+    print("-------------------")
         
 
 def print_report_execute(files, path):
