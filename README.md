@@ -8,7 +8,7 @@ The primary goal of this project is not only to build a strong file analytical t
 
 ## Development Approach
 
-This project is being developed alongside my reading of *Clean Code* by Robert C. Martin, with a focus on clear naming, single-responsibility functions, and incremental refactoring.
+This project is being developed alongside my reading of *Clean Code* by Robert C. Martin, with a focus on clear naming, single-responsibility functions, and incremental refactoring. Additionally working to 
 
 ## Current Features
 
@@ -46,3 +46,4 @@ file-intelligence/
 
 - Python
 - pathlib
+- pytest
