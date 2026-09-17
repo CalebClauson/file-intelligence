@@ -1,7 +1,7 @@
 from pathlib import Path
 import json
 
-from scanner import (format_size, scan_directory, get_file_info, count_files, total_size, count_by_extension, get_largest_files, group_by_size, filter_duplicates, find_duplicates, find_empty_directories, generate_report, json_dump,)
+from scanner import (format_size, scan_directory, get_file_info, count_files, total_size, count_by_extension, get_largest_files, group_by_size, filter_duplicates, find_duplicates, find_empty_directories, generate_report, json_dump, export_report_json)
 
 
 def test_format_size_bytes():
@@ -39,12 +39,12 @@ def test_count_by_extension_no_extension():
     assert result == ({"": 1}), "count_by_extension_no_extension ERROR"
 
 # TODO ISSUE NESTED ARENT SCANNED
-# def test_scan_directory_finds_nested_files():
-#     path = Path("tests/test_cases/test_data_nested")
-#     result = scan_directory(path)
-#     expected = [Path("tests/test_cases/test_data_nested/test.txt"), Path("tests/test_cases/test_data_nested/nested/test2.txt")]
+def test_scan_directory_finds_nested_files():
+     path = Path("tests/test_cases/test_data_nested")
+     result = scan_directory(path)
+     expected = [Path("tests/test_cases/test_data_nested/test.txt"), Path("tests/test_cases/test_data_nested/nested/test2.txt")]
     
-#     assert result == expected, "scan_directory_finds_nested_files ERROR"
+     assert result == expected, "scan_directory_finds_nested_files ERROR"
 
 
 def test_get_file_info():
@@ -94,20 +94,62 @@ def test_filter_duplicates():
 
 
 def test_find_duplicates():
-    pass
+    path = Path("tests/test_cases/test_data")
+    files = scan_directory(path)
+    result = find_duplicates(files)
+    # hash : files matching hash
+    expected = (
+    {
+        "b822f1cd2dcfc685b47e83e3980289fd5d8e3ff3a82def24d7d1d68bb272eb32": [
+            "tests/test_cases/test_data/duplicate2.txt",
+            "tests/test_cases/test_data/duplicate1.txt",
+        ]
+    })
+    assert result == expected, "find_duplicates ERROR"
 
 
 def test_find_empty_directories():
-    pass
+    path = Path("tests/test_cases/test_data")
+    result = find_empty_directories(path)
+    expected = ([
+        'tests/test_cases/test_data/empty_folder'
+    ])
+    assert result == expected, "find_empty_directories ERROR"
 
 
 def test_get_largest_files():
-    pass
+    path = Path("tests/test_cases/test_data")
+    files = scan_directory(path)
+    result = get_largest_files(files, 1)
+    expected = [(
+        28, Path('tests/test_cases/test_data/file2.txt')    
+    )]
+    assert result == expected, "get_largest_files ERROR"
 
 
 def test_generate_report_contains_expected_keys():
-    pass
+    path = Path("tests/test_cases/test_data")
+    files = scan_directory(path)
+    result = generate_report(files, path)
+    expected = {
+        "path",
+        "total_files",
+        "total_size",
+        "extensions",
+        "largest_files",
+        "duplicates",
+        "empty_directories",
+    }
+    assert set(result.keys()) == expected, "generate_report_contains_expected_keys ERROR"
 
 
 def test_json_export_creates_report_file():
-    pass
+    output_path = Path("output/report.json")
+    path = Path("tests/test_cases/test_data")
+    files = scan_directory(path)
+
+    if output_path.exists():
+        output_path.unlink()
+        
+    export_report_json(files, path)
+    assert output_path.is_file(), "json_export_creates_report_file ERROR"
