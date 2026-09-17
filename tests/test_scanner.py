@@ -6,26 +6,30 @@ from scanner import (format_size, scan_directory, get_file_info, count_files, to
 
 def test_format_size_bytes():
     result = format_size(500)
-    assert result == (500, "B"), "format_size_byte ERROR"
+    expected = (500, "B")
+    assert result == expected, "format_size_byte ERROR"
 
 
 def test_format_size_kilobytes():
     result = format_size(1500)
-    assert result == (1.46, "KB"), "format_size_kilobyte ERROR"
+    expected = (1.46, "KB")
+    assert result == expected, "format_size_kilobyte ERROR"
 
 
 def test_count_files():
     path = Path("tests/test_cases/test_data")
     files = scan_directory(path)
     result = count_files(files)
-    assert result == (4), "count_files ERROR"
+    expected = 4
+    assert result == expected, "count_files ERROR"
 
 
 def test_count_by_extension():
     path = Path("tests/test_cases/test_data")
     files = scan_directory(path)
     result = count_by_extension(files)
-    assert result == ({'.txt': 4}), "count_by_extension ERROR"
+    expected = {'.txt': 4}
+    assert result == expected, "count_by_extension ERROR"
 
 
 def test_count_by_extension_no_extension():
@@ -56,15 +60,37 @@ def test_get_file_info():
 
 
 def test_total_size():
-    pass
+    path = Path("tests/test_cases/test_data")
+    files = scan_directory(path)
+    result = total_size(files)
+    expected = (65,'B')
+    assert result == expected, "total_size ERROR"
 
 
 def test_group_by_size():
-    pass
+    path = Path("tests/test_cases/test_data")
+    files = scan_directory(path)
+    result = group_by_size(files)
+    expected = {
+        10: [Path("tests/test_cases/test_data/duplicate2.txt"),Path("tests/test_cases/test_data/duplicate1.txt"),],
+        28: [Path("tests/test_cases/test_data/file2.txt"),],
+        17: [Path("tests/test_cases/test_data/file1.txt"),],
+        }
+    assert result == expected, "group_by_size ERROR"
 
 
 def test_filter_duplicates():
-    pass
+    hash_groups = {
+        "hash_a": [Path("tests/test_cases/test_data/duplicate2.txt"), Path("tests/test_cases/test_data/duplicate1.txt")],
+        "hash_b": [Path("tests/test_cases/test_data/file2.txt")],
+    }
+    result = filter_duplicates(hash_groups)
+    expected = {
+            f'hash_a': [
+            Path('tests/test_cases/test_data/duplicate2.txt'),
+            Path('tests/test_cases/test_data/duplicate1.txt'),
+     ],}
+    assert result == expected, "filter_duplicates ERROR"
 
 
 def test_find_duplicates():
