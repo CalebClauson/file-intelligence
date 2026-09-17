@@ -26,6 +26,7 @@ This project is being developed alongside my reading of *Clean Code* by Robert C
 - Duplicate detection using file size + SHA-256 hashing
 - Empty directory detection
 - JSON or CSV export
+- Basic Unit Testing
 
 ## Current Project Structure
 
@@ -33,7 +34,14 @@ This project is being developed alongside my reading of *Clean Code* by Robert C
 file-intelligence/
 ├── main.py
 ├── scanner.py
-└── README.md
+├── README.md
+├── .gitignore
+├── tests/
+   ├── test_scanner.py
+   └── test_cases/
+       ├── test_data/
+       ├── test_data_extension/
+       └── test_data_nested/
 ```
 
 # Planned Features
