@@ -3,6 +3,9 @@ from pathlib import Path
 import hashlib
 import json
 
+CYAN = "\033[36m"
+RESET = "\033[0m"
+
 # Helpers
 def format_size(bytes):
     units = ["B", "KB", "MB", "GB", "TB"]
@@ -21,6 +24,8 @@ def scan_directory(path):
             scan_results.append(item)
     return scan_results
 
+def is_valid_directory(directory_path):
+    return Path(directory_path).is_dir()
 
 def get_file_info(file_path):
     file_path = Path(file_path)
@@ -44,7 +49,7 @@ def total_size(files):
     return format_size(total_size)
 
 def print_total_files(total_files):
-    print("---Total Files---")
+    print(f"\n{CYAN}---Total Files---{RESET}")
     print(f"Total Files : {total_files}")
     
 
@@ -56,7 +61,7 @@ def count_by_extension(files):
     return file_type
 
 def print_extensions(extensions):
-    print("---Extension Types in Directory---")
+    print(f"\n{CYAN}---Extension Types in Directory---{RESET}")
     for extension, count in extensions.items():
         if extension:
             display_extension = extension
@@ -99,7 +104,7 @@ def build_largest_file_report(files):
     return formatted_files
 
 def print_largest(formatted_files):
-    print("---Largest Files in Directory---")
+    print(f"\n{CYAN}---Largest Files in Directory---{RESET}")
 
     for file_info in formatted_files:
         file_name = Path(file_info["path"]).name
@@ -175,7 +180,7 @@ def find_duplicates(files):
     return formatted_duplicates
 
 def print_duplicates(duplicates):
-    print("---Duplicate Files in Directory---")
+    print(f"\n{CYAN}---Duplicate Files in Directory---{RESET}")
 
     for grouped_files in duplicates.values():
         for file_path in grouped_files:
@@ -197,7 +202,7 @@ def find_empty_directories(path):
     return empty_directories
 
 def print_empty_directories(directories):
-    print("---Empty Directories---")
+    print(f"\n{CYAN}---Empty Directories---{RESET}")
 
     for directory in directories:
         directory_name = Path(directory).name
