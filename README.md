@@ -25,8 +25,9 @@ This project is being developed alongside my reading of *Clean Code* by Robert C
 - Largest-file detection with heap
 - Duplicate detection using file size + SHA-256 hashing
 - Empty directory detection
-- JSON or CSV export
+- JSON export
 - Basic Unit Testing
+- Basicu TUI Flow
 
 ## Current Project Structure
 
