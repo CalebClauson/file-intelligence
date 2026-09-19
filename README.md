@@ -35,6 +35,7 @@ This project is being developed alongside my reading of *Clean Code* by Robert C
 file-intelligence/
 ├── main.py
 ├── scanner.py
+├── terminal_ui.py
 ├── README.md
 ├── .gitignore
 ├── tests/
