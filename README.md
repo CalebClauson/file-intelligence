@@ -27,7 +27,7 @@ This project is being developed alongside my reading of *Clean Code* by Robert C
 - Empty directory detection
 - JSON export
 - Basic Unit Testing
-- Basicu TUI Flow
+- Basic TUI Flow
 
 ## Current Project Structure
 
@@ -35,7 +35,7 @@ This project is being developed alongside my reading of *Clean Code* by Robert C
 file-intelligence/
 ├── main.py
 ├── scanner.py
-├── terminal_ui.py
+├── terminal_ui.pyand
 ├── README.md
 ├── .gitignore
 ├── tests/
@@ -51,6 +51,7 @@ file-intelligence/
 - Terminal report generation
 - Directory/file exclusion rules
 - File filtering options
+- Direct file interaction instead of requiring file directory manually
 
 # Tech
 
